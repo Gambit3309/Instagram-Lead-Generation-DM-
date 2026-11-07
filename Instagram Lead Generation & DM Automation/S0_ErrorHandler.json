@@ -1,0 +1,182 @@
+{
+  "name": "S0_ErrorHandler",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// S0 · \"Format Error\" (Code node, Run Once for All Items)\n// Error Trigger output carries { workflow:{id,name}, execution:{id,url,error:{message},lastNodeExecuted,mode} }.\n// Property access is defensive because the shape can differ between n8n versions.\nconst e = $input.first().json || {};\nconst wf = (e.workflow && e.workflow.name) || 'unknown workflow';\nconst ex = e.execution || {};\nconst msg = (ex.error && ex.error.message) || 'no message';\nconst node = ex.lastNodeExecuted || (ex.error && ex.error.node && ex.error.node.name) || 'unknown node';\nconst url = ex.url || '';\nconst ts = new Date().toISOString();\n\nreturn [{ json: {\n  ts, workflow: wf, level: 'error',\n  detail: `node=\"${node}\" msg=\"${String(msg).slice(0, 300)}\" execution=${ex.id || '?'}`,\n  text: `:rotating_light: *n8n workflow failed*\\n*Workflow:* ${wf}\\n*Node:* ${node}\\n*Error:* ${msg}\\n${url ? '*Execution:* ' + url : ''}`,\n}}];\n"
+      },
+      "id": "301074e4-9203-480a-82ee-ea4e91f48d55",
+      "name": "Format Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE",
+          "mode": "list",
+          "cachedResultName": "Insta Lead Gen Errors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 573401934,
+          "mode": "list",
+          "cachedResultName": "Error",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE/edit#gid=573401934"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0fcda61e-4f77-4c34-8a53-fad4ca74a501",
+      "name": "Log To Events",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        80
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SisiLmuCUDvBwjmt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CDZ2QNQUR",
+          "mode": "list",
+          "cachedResultName": "ig-leads"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "id": "3b6d7825-db00-4b39-90be-575711567667",
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        288
+      ],
+      "webhookId": "eed08536-68e6-4639-bd76-9ad60204fd78",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "9z7O89pfzR9eBjWp",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## S0_ErrorHandler\nSet this as **Settings -> Error workflow** on every other workflow.\nLogs the failure to the Events tab and alerts Slack.\n**Before use:** pick credentials, replace YOUR_SHEET_ID (scripts/set_sheet_id.py).",
+        "height": 200,
+        "width": 520,
+        "color": 7
+      },
+      "id": "e8629c12-d666-43b2-b5a5-59746cc1a76c",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -176
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -272,
+        288
+      ],
+      "id": "7b36aa82-eef7-40a0-b7ce-a31c0f18bb9c",
+      "name": "S0 Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        80
+      ],
+      "id": "22d14769-66d5-43b8-b3bb-b2d958bd8c59",
+      "name": "Manual Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Format Error": {
+      "main": [
+        [
+          {
+            "node": "Log To Events",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S0 Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "cf367d5e-4bd4-4777-83df-1e4ec70c37e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6602e78ecc5afdf038b05998dc4471947d82edf62ee3f15aef614132a3cf2faa"
+  },
+  "nodeGroups": [],
+  "id": "3o69iS6LnDFW7mu8",
+  "tags": []
+}

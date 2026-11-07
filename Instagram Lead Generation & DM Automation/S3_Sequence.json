@@ -1,0 +1,1103 @@
+{
+  "name": "S3_Sequence",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "ac468deb-185b-47ac-a6b0-55914cc79759",
+      "name": "S3 Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1168,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## S3_Sequence\nRules enforced in code: max 3 steps/lead, DAILY_CAP (hard max 20), MIN_SCORE, STOP/opted_out never contacted, template must contain a STOP line, deterministic queue_id (no duplicates).\nWrites **Queue rows (pending)** + advances Leads. **Nothing is sent here.**",
+        "height": 136,
+        "width": 760,
+        "color": 7
+      },
+      "id": "35c8fee8-8cdd-46ef-80ae-b2c9094cb8e4",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE",
+          "mode": "list",
+          "cachedResultName": "Insta Lead Gen "
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1905514822,
+          "mode": "list",
+          "cachedResultName": "Templates"
+        },
+        "options": {}
+      },
+      "id": "58645d3a-3131-4453-9459-5dbbab5d78ff",
+      "name": "Read Templates1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -832,
+        176
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SisiLmuCUDvBwjmt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE",
+          "mode": "list",
+          "cachedResultName": "Insta Lead Gen "
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 282744159,
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "options": {}
+      },
+      "id": "3f09d43d-cf7a-4c82-8b0a-5a4808164150",
+      "name": "Read Leads1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -576,
+        176
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SisiLmuCUDvBwjmt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE",
+          "mode": "list",
+          "cachedResultName": "Insta Lead Gen "
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 36150007,
+          "mode": "list",
+          "cachedResultName": "Queue",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE/edit#gid=36150007"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "queue_id",
+              "displayName": "queue_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "profile_url",
+              "displayName": "profile_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "step",
+              "displayName": "step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "niche",
+              "displayName": "niche",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "why_send",
+              "displayName": "why_send",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_text",
+              "displayName": "message_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sent_by",
+              "displayName": "sent_by",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sent_at",
+              "displayName": "sent_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "cbf123c7-1ffe-4830-92b9-5b85dcb033b9",
+      "name": "Append To Queue1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        176
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SisiLmuCUDvBwjmt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are an expert B2B Instagram outreach strategist for an AI & Automation agency.\nAnalyze the lead and return ONLY a valid JSON object (no markdown formatting or backticks) with two keys:\n1. \"why_send\": 1- sentences explaining why this specific lead is worth messaging and what angle will hook them.\n2. \"message_text\": A personalized, conversational Instagram DM (under 400 characters) pitching our AI automation services tailored to their niche and bio. Adjust tone based on Outreach Step (Step 1 = warm opener, Step 2 = value follow-up, Step 3 = brief closing check-in). Must end with \"Reply STOP to opt out.\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -224,
+        176
+      ],
+      "id": "9a706724-5cd6-4ab7-95ba-7a433e414bab",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "maxTokens": 2000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        384
+      ],
+      "id": "5ffed45e-188c-4c9d-adf7-e8f665f86394",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "mfJSgPEt9v046Pma",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pulls original lead details from Read Leads1 and combines them \n// with the AI Agent's output text.\n\nconst aiItems = $input.all();\nconst leadRows = $('Read Leads1').all().map(n => n.json);\nconst out = [];\n\nfor (let i = 0; i < aiItems.length; i++) {\n  const aiItem = aiItems[i]?.json || {};\n  \n  // Fall back to matching index from the Read Leads1 node if properties were dropped\n  const originalLead = leadRows[i] || {};\n  \n  const username = aiItem.username || originalLead.username || 'unknown_user';\n  const niche = aiItem.niche || originalLead.niche || 'small business';\n  const score = aiItem.score || originalLead.score || 0;\n  const step = aiItem.step || Number(originalLead.step || 0) + 1;\n\n  // The AI Agent outputs its response in the .output property\n  const rawResponse = aiItem.output || aiItem.text || '{}';\n\n  let parsed = {};\n  try {\n    const cleanJson = typeof rawResponse === 'string'\n      ? rawResponse.replace(/^```(?:json)?\\s*/i, '').replace(/```\\s*$/i, '').trim()\n      : rawResponse;\n    parsed = typeof cleanJson === 'string' ? JSON.parse(cleanJson) : cleanJson;\n  } catch (err) {\n    parsed = {};\n  }\n\n  let messageText = String(parsed.message_text || originalLead.base_template || '').trim();\n  const whySend = String(\n    parsed.why_send || `Strong ${niche} prospect (Score: ${score}).`\n  ).trim();\n\n  // Enforce mandatory opt-out footer\n  if (messageText && !/stop/i.test(messageText)) {\n    messageText = `${messageText}\\n\\nReply STOP to opt out.`;\n  }\n\n  const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');\n\n  out.push({\n    json: {\n      queue_id: `Q-${todayStr}-${username}-${step}`,\n      username: username,\n      profile_url: `https://www.instagram.com/${username}/`,\n      step: step,\n      niche: niche,\n      score: score,\n      why_send: whySend,\n      message_text: messageText,\n      status: 'pending',\n      created_at: aiItem.now_iso || new Date().toISOString(),\n      sent_by: '',\n      sent_at: ''\n    }\n  });\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        176
+      ],
+      "id": "42fb16b1-e255-4244-a10e-f5b437aefb49",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {
+    "Read Templates1": [
+      {
+        "json": {
+          "row_number": 2,
+          "step": 1,
+          "delay_days": 2,
+          "niche": "default",
+          "template_text": "Hi @{{username}}, I’m an intern at Logitrix — we build AI and SaaS tools. {{ai_line}} Reply STOP anytime and I won’t message you again."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "step": 2,
+          "delay_days": 3,
+          "niche": "default",
+          "template_text": "Hi @{{username}}, quick follow-up in case my last note got buried. {{ai_line}} Reply STOP anytime and I won’t message you again."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "step": 3,
+          "delay_days": 0,
+          "niche": "default",
+          "template_text": "Last note from me, @{{username}}! {{ai_line}} Feel free to message back anytime. Reply STOP anytime and I won’t message you again."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Read Leads1": [
+      {
+        "json": {
+          "row_number": 2,
+          "ig_user_id": 43344267816,
+          "username": "zayn_fashions__",
+          "source": "scrape",
+          "followers": 36,
+          "bio": "Curated with love by a new mom! 🤱✨ Running my dream clothing shop 🛍️🛍️from home so I can stay close to my little one. High-quality, packed with care♥️♥️♥️",
+          "email": "",
+          "website": "",
+          "niche": "ecommerce",
+          "score": 40,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "ig_user_id": 75411053255,
+          "username": "dre.automation",
+          "source": "scrape",
+          "followers": 38,
+          "bio": "I build AI agents & automations for businesses AI agents • Lead follow-up • Customer support DM “AUTOMATE” to discuss a workflow.",
+          "email": "",
+          "website": "",
+          "niche": "saas_tech",
+          "score": 40,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "ig_user_id": 59663380768,
+          "username": "ablionitsolutions",
+          "source": "scrape",
+          "followers": 96,
+          "bio": "WEB DESIGN / MOBILE APPLICATION / SOFTWARE DEVELOPMENT",
+          "email": "",
+          "website": "",
+          "niche": "agency",
+          "score": 28,
+          "tier": "cold",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "ig_user_id": 17023767892,
+          "username": "saerosense",
+          "source": "scrape",
+          "followers": 0,
+          "bio": "AI automation for any business 🤖🌍 ⚙️ Workflows · AI agents · websites Salons, clinics, shops, startups & enterprise 👇 Free automation scope",
+          "email": "",
+          "website": "",
+          "niche": "ecommerce",
+          "score": 43,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "ig_user_id": 71946474750,
+          "username": "mjdigisolutionpvtltd",
+          "source": "scrape",
+          "followers": 4,
+          "bio": "🏆 Top Digital Marketing Agency in India 🌍 Websites | SEO | Ads for brands worldwide 👇 Free audit - DM \"AUDIT\"",
+          "email": "",
+          "website": "https://mjdigisolution.com/",
+          "niche": "agency",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "ig_user_id": 57244823484,
+          "username": "abudiinfotech",
+          "source": "scrape",
+          "followers": 115,
+          "bio": "💡 IT Solutions | AI | Software Development 📱 Mobile & Web App Development 🚀 Transforming ideas into smart technology 📍 Qatar 🌐 abudiinfotech.com",
+          "email": "",
+          "website": "abudiinfotech.com",
+          "niche": "saas_tech",
+          "score": 48,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "ig_user_id": 65050285836,
+          "username": "honkmedia_marketing",
+          "source": "scrape",
+          "followers": 277,
+          "bio": "We help brands grow faster with digital marketing. Content Creation | Google Ads | Meta Ads | Web | SEO | SMO | Web Hosting. 📞 90342 03204",
+          "email": "",
+          "website": "",
+          "niche": "agency",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "ig_user_id": 35240349286,
+          "username": "aeoappai",
+          "source": "scrape",
+          "followers": 23,
+          "bio": "AI Marketing & Growth Platform AEO • SEO • Content • Growth Hacking Turn marketing opportunities into growth. ↓ Start with AEO-App 📞+91 88481 15465",
+          "email": "",
+          "website": "",
+          "niche": "agency",
+          "score": 26,
+          "tier": "cold",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 10,
+          "ig_user_id": 72326525837,
+          "username": "sharmamahi380",
+          "source": "scrape",
+          "followers": 1,
+          "bio": "",
+          "email": "",
+          "website": "",
+          "niche": "other",
+          "score": 0,
+          "tier": "cold",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 11,
+          "ig_user_id": 42317684,
+          "username": "jaysteentheillest",
+          "source": "scrape",
+          "followers": 1403,
+          "bio": "Mommy 👩🏻🧑🏻👦🏻👧🏻👧🏻🧒🏻Wife 💍 Writer ✒ Mental Health Awareness 🦋 Hip Hop Head 🎧 Grooming 🐩✂️Recovery ; from homeless to housed🏡",
+          "email": "",
+          "website": "https://nextrisingstar.org/2026/abigail-cc33",
+          "niche": "other",
+          "score": 40,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 12,
+          "ig_user_id": 38107700191,
+          "username": "growth_metrics_marketing_",
+          "source": "scrape",
+          "followers": 5,
+          "bio": "We build marketing that moves the numbers. Social media, strategy & websites designed to convert. 📩 Book a free discovery call.",
+          "email": "",
+          "website": "https://growthmetricsmarketing.com/",
+          "niche": "agency",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 13,
+          "ig_user_id": 3227346997,
+          "username": "wiggledigital",
+          "source": "scrape",
+          "followers": 188,
+          "bio": "Experts in Digital Marketing SEO & PPC Web development Graphics & WebDesign Follow TikTok @wiggledigital Contact www.wiggledigital.co.za for more",
+          "email": "",
+          "website": "https://www.wiggledigital.co.za/",
+          "niche": "agency",
+          "score": 48,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 14,
+          "ig_user_id": 46965874644,
+          "username": "oxford_virtual_assist",
+          "source": "scrape",
+          "followers": 277,
+          "bio": "Virtual Assistant - PA & admin support for academics and small businesses - 07491 995347 - Oxford Diary, inbox, meetings management | ICO & PI Insured",
+          "email": "",
+          "website": "http://oxfordvirtualassistant.co.uk",
+          "niche": "other",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 15,
+          "ig_user_id": 28202160249,
+          "username": "_the_gift_corner",
+          "source": "scrape",
+          "followers": 181,
+          "bio": "Creative handmade Gifts😊 Customised bouquet🌻 Cakes😊 customised photo frames➕ photo collage➕affordable price String Art💥 Inbox for orders🤗",
+          "email": "",
+          "website": "",
+          "niche": "ecommerce",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 16,
+          "ig_user_id": 32190946308,
+          "username": "landerbudget",
+          "source": "scrape",
+          "followers": 0,
+          "bio": "Websites that make your services easy to understand Landing pages & business sites Typically 1-2 weeks | DM or WhatsApp us",
+          "email": "",
+          "website": "https://landerbudget.com",
+          "niche": "saas_tech",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 17,
+          "ig_user_id": 43421990364,
+          "username": "tahadigitalstudio.1",
+          "source": "scrape",
+          "followers": 56,
+          "bio": "Empowering businesses with Shopify & WordPress development and data-driven digital marketing to create websites that perform & brands that grow.",
+          "email": "",
+          "website": "",
+          "niche": "ecommerce",
+          "score": 40,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 18,
+          "ig_user_id": 46148585617,
+          "username": "knsoftic",
+          "source": "scrape",
+          "followers": 379,
+          "bio": "KN Softic House — Where Ambition Meets Opportunity ✨ Empowering minds to learn, grow & succeed 🚀 📍 Near Bara Bypass, Sadhar, Faisalabad",
+          "email": "",
+          "website": "",
+          "niche": "other",
+          "score": 20,
+          "tier": "cold",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 19,
+          "ig_user_id": 79860873435,
+          "username": "_homey.___",
+          "source": "scrape",
+          "followers": 26,
+          "bio": "✨ Trending Home & Kitchen Essentials🛍️ Bags • Gifts • Gadgets • Kids • More 🚚 Pan India Delivery 👗 Dress Collection: @faa_.boutique.___",
+          "email": "",
+          "website": "",
+          "niche": "ecommerce",
+          "score": 25,
+          "tier": "cold",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 20,
+          "ig_user_id": 80224466385,
+          "username": "accordxai",
+          "source": "scrape",
+          "followers": 13,
+          "bio": "Done-for-you AI growth for local businesses. Google profiles, websites, ads, reviews and follow-up. Free growth audit ↓",
+          "email": "",
+          "website": "https://accordx.ai",
+          "niche": "saas_tech",
+          "score": 53,
+          "tier": "warm",
+          "_kind": "new",
+          "status": "new",
+          "step": 0,
+          "last_contacted_at": "",
+          "next_action_at": "",
+          "comment_id": "",
+          "window_expires_at": "",
+          "created_at": "2026-11-04T07:01:22.601Z",
+          "updated_at": "2026-11-04T07:01:22.601Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "AI Agent": [
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a rapidly evolving industry where efficiency and automation can significantly enhance productivity. Positioning our services as a way to streamline their processes will resonate well with their growth ambitions.\",\n  \"message_text\": \"Hey there! I love what you're doing in the [specific industry/niche] space. As an AI & Automation agency, we specialize in helping businesses like yours automate repetitive tasks and boost efficiency. I'm excited to explore how we can support your growth journey! Let’s chat! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a growing tech space that can greatly benefit from AI & automation. Their focus on efficiency and innovation aligns well with our services, making them an ideal candidate for a personalized approach.\",\n  \"message_text\": \"Hey there! I love how your team is pushing the envelope in tech innovation. 🤖 Have you considered how AI & automation could elevate your operational efficiency even further? We specialize in helping businesses like yours streamline processes. Let’s chat! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead showcases a strong focus on digital transformation and enhancing operational efficiency, making them a prime candidate for AI-driven automation solutions. Engaging them with a relatable reference to their commitment will resonate well.\",\n  \"message_text\": \"Hey there! I love how you’re embracing digital transformation in your business. At our AI & Automation agency, we specialize in tailoring solutions that boost efficiency and cut costs. I'd love to share how we can help you achieve your goals faster! Interested? Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is actively seeking innovative solutions to optimize their processes, making them an ideal candidate for our AI-powered automation services. Highlighting the potential to streamline their operations will resonate with their current needs.\",\n  \"message_text\": \"Hey there! I noticed you’re all about optimizing efficiency in your business. Our AI automation services can help you streamline your processes and save valuable time. Let’s chat about how we can help elevate your operations to the next level! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a tech-focused niche, showing a keen interest in innovation. Highlighting how our AI automation can enhance their efficiency and creativity will resonate with their goals.\",\n  \"message_text\": \"Hi there! I love how you’re embracing tech innovation in your projects. At our AI & Automation agency, we specialize in optimizing workflows to boost creativity and efficiency. I'd love to explore how we can help elevate your business! Interested? Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a rapidly growing industry where efficiency is key. By highlighting our AI and automation services, we can appeal to their need for streamlined processes and increased productivity.\",\n  \"message_text\": \"Hey [Name]! 🌟 I noticed your focus on [specific niche or activity from their bio]—exciting stuff! At [Your Agency], we specialize in AI solutions that could supercharge your operations. Imagine streamlining [specific pain point]. Let’s chat about how we can help! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a niche where efficiency and innovation are paramount, making them a prime candidate for AI-driven automation solutions. By highlighting their potential for growth and optimization through automation, we can engage them effectively.\",\n  \"message_text\": \"Hey there! 🌟 I noticed your focus on [specific niche/theme] and thought it’s fascinating. At [Your Agency], we specialize in AI automation that helps businesses like yours streamline processes and boost productivity. Would you be open to exploring how we can enhance your operations? Let’s chat! 😄 Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a fast-paced e-commerce sector that can greatly benefit from AI-driven automation solutions. Highlighting how our services can streamline their operations and boost conversions will resonate well with their goals.\",\n  \"message_text\": \"Hey there! I noticed your amazing work in e-commerce. Imagine automating your order processing and customer interactions to save time and boost sales! Our AI solutions can help make that a reality. Would love to chat more about how we can support your growth. Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is actively involved in the tech industry and has shown interest in innovative solutions, making them a great candidate for our AI automation services. Highlighting potential efficiency gains and insights will resonate with their goals.\",\n  \"message_text\": \"Hey [Name], I noticed you're passionate about tech innovation! We specialize in AI & automation solutions that help companies like yours streamline workflows and boost efficiency. Would love to chat about how we can support your growth goals. Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is actively looking for ways to improve efficiency in their business processes, making them an ideal candidate for our AI automation services. By addressing their pain points, we can showcase how our solutions can save them time and enhance productivity.\",\n  \"message_text\": \"Hey there! I noticed you're focused on improving business efficiency—great mission! Our AI automation solutions can help streamline your workflows and drive productivity. Would love to chat about how we can support your goals. What challenges are you facing in this area? Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 9
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a rapidly evolving industry that can greatly benefit from AI and automation solutions. Highlighting efficiency and innovation will resonate with their goals.\",\n  \"message_text\": \"Hi [Name]! I love what you’re doing in [Industry]. Have you thought about how AI can streamline your processes? Our automation solutions help brands like yours save time and enhance productivity. Let’s chat about how we can empower your business! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 10
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in the e-commerce space and mentions efficiency in their bio, indicating a potential interest in streamlining operations. Highlighting how AI can optimize their processes and enhance customer experience could resonate well.\",\n  \"message_text\": \"Hey there! 👋 I noticed you’re passionate about efficiency in e-commerce. Our AI automation solutions can help streamline your processes, saving you time and enhancing customer engagement. Would love to chat about how we can support your growth! 💡 Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 11
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a rapidly evolving tech environment where efficiency is key, making them an ideal candidate for AI-driven automation solutions. Highlighting how our services can streamline their operations will resonate well with their objectives.\",\n  \"message_text\": \"Hey [Lead's Name]! I noticed your innovative work in the tech space. Our AI & automation solutions can help streamline your processes and boost productivity. Would love to chat about how we can support your goals! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 12
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is actively involved in digital marketing and likely values efficiency and innovation in their campaigns. Highlighting our AI automation services will resonate with their goals of optimizing marketing efforts and improving ROI.\",\n  \"message_text\": \"Hey [Lead's Name]! I love how you're pushing the boundaries of digital marketing. Have you thought about how AI automation could streamline your processes and enhance your campaigns? I’d love to share insights on leveraging AI for better efficiency. Let’s connect! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 13
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is already engaging with AI and technology content, indicating an openness to automation solutions. Highlighting how our services can directly enhance their efficiency and drive innovation will resonate with their interests.\",\n  \"message_text\": \"Hey there! I loved seeing your focus on AI tech in your posts. At [Your Agency Name], we help businesses like yours streamline operations through tailored automation solutions. Imagine freeing up your team's time to focus more on creative projects! 🚀 Interested in discovering how we can support your goals? Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 14
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead has a significant online presence in the tech industry, showcasing their commitment to innovation. A focus on automating processes could enhance their efficiency and competitiveness, making our AI solutions a great fit.\",\n  \"message_text\": \"Hey there! I love how your company is pushing boundaries in tech. Have you considered AI automation to streamline your processes and boost productivity? We specialize in tailor-made solutions for innovative companies like yours. Let’s explore how we can help! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 15
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead operates in a tech-savvy industry where efficiency is paramount, making them a prime candidate for AI and automation solutions. Highlighting how our services can save them time and enhance productivity will resonate well with their goals.\",\n  \"message_text\": \"Hey there! I love what you're doing in the tech space! At our AI & Automation agency, we help businesses like yours streamline processes and boost efficiency with tailored automation solutions. Would you be open to exploring how we could help you save time and scale faster? Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 16
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is heavily involved in digital marketing services and has expressed interest in leveraging technology for growth. Highlighting our AI automation solutions can address their needs for efficiency and innovation.\",\n  \"message_text\": \"Hey there! I love how you're pushing the boundaries in digital marketing! 🚀 Have you considered how AI automation could enhance your services? Whether it's streamlining processes or optimizing campaigns, we've got solutions tailored for your niche. Let's explore how we can elevate your game! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 17
+        }
+      },
+      {
+        "json": {
+          "output": "{\n  \"why_send\": \"This lead is a growing e-commerce brand keen on optimizing its operations, which aligns perfectly with our AI automation services. Highlighting the benefits of streamlining processes will resonate with their goals of efficiency and growth.\",\n  \"message_text\": \"Hey there! I love what you’re doing with your e-commerce brand! Have you considered how AI can streamline your operations or enhance customer experience? Our automation solutions can help scale your business while saving you time. Let’s chat about it! Reply STOP to opt out.\"\n}"
+        },
+        "pairedItem": {
+          "item": 18
+        }
+      }
+    ]
+  },
+  "connections": {
+    "S3 Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Templates1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Templates1": {
+      "main": [
+        [
+          {
+            "node": "Read Leads1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Leads1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append To Queue1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "0f00164d-42d9-4adc-9334-0de93a34a02f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6602e78ecc5afdf038b05998dc4471947d82edf62ee3f15aef614132a3cf2faa"
+  },
+  "nodeGroups": [],
+  "id": "9aC7YIeQRIoND9CW",
+  "tags": []
+}

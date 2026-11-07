@@ -1,0 +1,113 @@
+{
+  "name": "S4_QueueAndAlerts",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "83d2c1d0-63ba-4aa5-a5ab-1cc27b396ec1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "897fca74-6c5f-4398-9ebc-048d5f852967",
+      "name": "S4 Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -592,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "ig-leads"
+        },
+        "text": "=Queues have been updated",
+        "otherOptions": {}
+      },
+      "id": "aaff7015-e096-4cc8-9748-88b91bfe2b5d",
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -224,
+        96
+      ],
+      "webhookId": "7e637901-8b53-4b53-8cdf-0b66e78fc3d7",
+      "executeOnce": true,
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "9z7O89pfzR9eBjWp",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## S4_QueueAndAlerts (Mode B, human in the loop)\n**Top:** posts ONE Slack digest of pending Queue rows (profile link + message).\n**Bottom:** the *Mark Sent Form* (activate the workflow to get the production URL, paste it into Config `MARKSENT_URL`). Submitting updates Queue, Leads and Messages. Double submits are ignored.",
+        "height": 200,
+        "width": 760,
+        "color": 7
+      },
+      "id": "205e8314-909c-48eb-9cf7-8c670c3a4d79",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -240
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Trigger": {
+      "main": [
+        [
+          {
+            "node": "Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "2520b377-2c05-4724-ac99-372a06974ed6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6602e78ecc5afdf038b05998dc4471947d82edf62ee3f15aef614132a3cf2faa"
+  },
+  "nodeGroups": [],
+  "id": "ifcuiAQy450UPLYB",
+  "tags": []
+}

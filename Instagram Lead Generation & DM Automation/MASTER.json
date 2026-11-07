@@ -1,0 +1,248 @@
+{
+  "name": "MASTER",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5ee4aa4d-7c0e-4605-862f-c7aade8a4788",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "bae5c482-850b-4330-bab1-1e8fad736800",
+      "name": "Schedule (disabled)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        240
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Bgia8wFlpXOgrc74",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Bgia8wFlpXOgrc74",
+          "cachedResultName": "S1_Scraper"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "7b3be51d-b661-40b1-aec2-825302ad0e4c",
+      "name": "Run S1_Scraper",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        144
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9bj3z6ewKAeL4Dxy",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/9bj3z6ewKAeL4Dxy",
+          "cachedResultName": "S2_CleanAndScore"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "bd45e500-2a97-4031-841b-9e4be1b97be2",
+      "name": "Run S2_CleanAndScore",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        144
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9aC7YIeQRIoND9CW",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/9aC7YIeQRIoND9CW",
+          "cachedResultName": "S3_Sequence"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "6acb7f17-f09b-4f8b-aad1-0ddbc34647db",
+      "name": "Run S3_Sequence",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        144
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "ifcuiAQy450UPLYB",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ifcuiAQy450UPLYB",
+          "cachedResultName": "S4_QueueAndAlerts"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "a4850926-7f68-4dac-86a0-62f23d873813",
+      "name": "Run S4_QueueAndAlerts",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        144
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "content": "## MASTER\nOne click (or the disabled schedule) runs S1 -> S2 -> S3 -> S4 in order.\nAfter import, open each *Run ...* node and pick the real workflow in the dropdown. S1 passes its leads to S2; S3/S4 read the Sheet themselves.",
+        "height": 190,
+        "width": 760,
+        "color": 7
+      },
+      "id": "92371b3a-397d-419e-abf9-0ad6d79042fa",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -224
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run S1_Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule (disabled)": {
+      "main": [
+        [
+          {
+            "node": "Run S1_Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run S1_Scraper": {
+      "main": [
+        [
+          {
+            "node": "Run S2_CleanAndScore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run S2_CleanAndScore": {
+      "main": [
+        [
+          {
+            "node": "Run S3_Sequence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run S3_Sequence": {
+      "main": [
+        [
+          {
+            "node": "Run S4_QueueAndAlerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "b2e3e4f5-7ca8-4d82-bbba-20cd24ac4516",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6602e78ecc5afdf038b05998dc4471947d82edf62ee3f15aef614132a3cf2faa"
+  },
+  "nodeGroups": [],
+  "id": "JtYM0ulR37fLIhsq",
+  "tags": []
+}

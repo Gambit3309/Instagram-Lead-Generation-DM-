@@ -1,0 +1,329 @@
+{
+  "name": "S1_Scraper",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6c08aa3a-0651-4e6c-ac44-3a27be0d0163",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "e9ffb558-0f7d-4a8c-8fbb-b4a72847af5a",
+      "name": "S1 Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -624,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## S1_Scraper\nCSV fallback FIRST: Config `SCRAPER_MODE=csv` reads files/fallback_leads.csv.\nWith `apify`: hashtag posts -> usernames -> profiles. **Any scraper error falls back to the CSV**, so the demo never depends on the scraper.\nOutput = standard lead object.\n**Check Apify docs** for actor input/output fields and run-sync limits.",
+        "height": 220,
+        "width": 760,
+        "color": 7
+      },
+      "id": "2b2c1269-920c-4dc3-b470-817c486b936b",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE",
+          "mode": "list",
+          "cachedResultName": "Insta Lead Gen ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1485614695,
+          "mode": "list",
+          "cachedResultName": "scraper_test_leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mb1EWe9XmihLxSJdP2-8udIDUzuDY83CBIEa49uk0fE/edit#gid=1485614695"
+        },
+        "options": {}
+      },
+      "id": "a5e0e98b-bdfa-43ba-a020-1318fd52bdec",
+      "name": "Read Config",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -288,
+        176
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SisiLmuCUDvBwjmt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// S1 · \"Parse Config\" (Code node, mode: Run Once for All Items)\n// Turns the Config tab rows (key,value) into ONE settings object for this run.\nconst rows = $input.all().map(i => i.json);\nconst cfg = {};\nfor (const r of rows) {\n  if (r.key) cfg[String(r.key).trim()] = String(r.value ?? '').trim();\n}\nconst num = (v, d) => { const n = parseInt(v, 10); return Number.isFinite(n) ? n : d; };\n\nreturn [{\n  json: {\n    // 'csv' (safe default) or 'apify'\n    mode: (cfg.SCRAPER_MODE || 'csv').toLowerCase(),\n    // \"ai automation, smallbusiness\" -> [\"ai automation\",\"smallbusiness\"]\n    hashtags: (cfg.HASHTAGS || '').split(',').map(h => h.trim().replace(/^#/, '').replace(/\\s+/g, '')).filter(Boolean),\n    postsLimit: num(cfg.POSTS_LIMIT, 20),\n    // Hard ceiling of 300 profiles per run (assignment rule: a few hundred max)\n    maxProfiles: Math.min(num(cfg.MAX_PROFILES, 100), 300),\n  },\n}];\n"
+      },
+      "id": "d466a428-d36e-4962-bd6f-ef4ad0c0f4bc",
+      "name": "Parse Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actors/apify~instagram-hashtag-scraper/run-sync-get-dataset-items",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ hashtags: $json.hashtags, resultsLimit: $json.postsLimit, resultsType: 'posts' }) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "490c36aa-7a13-40d7-8b2f-acdf010103b0",
+      "name": "Find Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        176
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// S1 · \"Collect Usernames\" (Code node, Run Once for All Items)\n// Input: hashtag POSTS from the scraper. Output: ONE item with a de-duplicated\n// list of post-owner usernames, capped at maxProfiles.\n// Field names (ownerUsername / owner.username) come from the example workflows;\n// VERIFY them against your real actor output (Apify run -> Output tab).\nconst { maxProfiles } = $('Parse Config').first().json;\nconst seen = new Set();\n\nfor (const it of $input.all()) {\n  const p = it.json || {};\n  const u = String(p.ownerUsername || (p.owner && p.owner.username) || '')\n    .trim().toLowerCase().replace(/^@/, '');\n  if (u) seen.add(u);\n  if (seen.size >= maxProfiles) break;\n}\n\n// Throwing sends this node's ERROR output -> CSV fallback branch.\nif (seen.size === 0) throw new Error('Scraper returned no usernames - using CSV fallback');\n\nreturn [{ json: { usernames: [...seen] } }];\n"
+      },
+      "id": "6ea9691d-297a-4493-adf3-260c34530b52",
+      "name": "Collect Usernames",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        160
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/actors/apify~instagram-profile-scraper/run-sync-get-dataset-items",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ usernames: $json.usernames }) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "25f139f0-88a1-4b11-b37d-2f2db2831329",
+      "name": "Scrape Profiles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        816,
+        144
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// S1 · \"Normalize To Lead Shape\" (Code node, Run Once for All Items)\n// BOTH paths (Apify profiles and the CSV fallback) end here, so everything\n// downstream sees the SAME \"standard lead object\":\n// ig_user_id, username, source, followers, bio, email, website, niche, score, tier\n// Apify field names (id, username, followersCount, biography, externalUrl) are\n// assumptions based on the sample workflows - VERIFY on a real output item.\nconst toInt = v => {\n  const n = parseInt(String(v ?? '').replace(/[^0-9]/g, ''), 10);\n  return Number.isFinite(n) ? n : 0;\n};\n\nconst out = [];\nfor (const it of $input.all()) {\n  const p = it.json || {};\n  const username = String(p.username || p.ownerUsername || '')\n    .trim().toLowerCase().replace(/^@/, '');\n  if (!username) continue; // skip rows with no username (e.g. empty items)\n\n  out.push({\n    json: {\n      ig_user_id: String(p.ig_user_id || p.id || ''),\n      username,\n      source: 'scrape',\n      followers: toInt(p.followers ?? p.followersCount),\n      bio: String(p.bio ?? p.biography ?? '').trim(),\n      email: String(p.email || p.businessEmail || '').trim().toLowerCase(),\n      website: String(p.website || p.externalUrl || '').trim(),\n      niche: '',\n      score: '',\n      tier: '',\n    },\n  });\n}\n// Hard safety cap (assignment: a few hundred profiles per run at most)\nreturn out.slice(0, 300);\n"
+      },
+      "id": "2def1ca9-acff-432d-9b4b-cb8604d1a5d8",
+      "name": "Normalize To Lead Shape",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        128
+      ],
+      "id": "88d7de2b-4118-4599-a273-272102a1d0d9",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3o69iS6LnDFW7mu8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/3o69iS6LnDFW7mu8",
+          "cachedResultName": "S0_ErrorHandler"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        1168,
+        480
+      ],
+      "id": "9509ce58-c6d1-4ecf-9acb-7ab2fbe9cbb4",
+      "name": "S0_ErrorHandler"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Config": {
+      "main": [
+        [
+          {
+            "node": "Parse Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Config": {
+      "main": [
+        [
+          {
+            "node": "Find Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Posts": {
+      "main": [
+        [
+          {
+            "node": "Collect Usernames",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "S0_ErrorHandler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Usernames": {
+      "main": [
+        [
+          {
+            "node": "Scrape Profiles",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "S0_ErrorHandler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Profiles": {
+      "main": [
+        [
+          {
+            "node": "Normalize To Lead Shape",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "S0_ErrorHandler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize To Lead Shape": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "bc27bd43-b465-4d7c-8085-fdf071587243",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6602e78ecc5afdf038b05998dc4471947d82edf62ee3f15aef614132a3cf2faa"
+  },
+  "nodeGroups": [],
+  "id": "Bgia8wFlpXOgrc74",
+  "tags": []
+}
